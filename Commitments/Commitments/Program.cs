@@ -1,94 +1,49 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
+using MCL.BLS12_381.Net;
 
 namespace Commitments
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static BigInteger Secret { get; } = new(1234);
+        public static void Main(string[] args)
         {
+            var poly = new Polynomial(new BigInteger[] { 5, 25, 125 });
 
+            var g1 = G1Builder.Build(poly.Size, Secret);
+
+            var parts = poly.Frs
+                .Select(fr => MclBls12381.EvaluatePolynomial(g1, fr));
+
+            var commitment = parts.Aggregate(G1.Zero, (acc, e) => acc + e);
         }
     }
-    /// <summary>
-    /// Represent a polynomial of the n'th degree with an array of n coefficients
-    /// corresponding to the i'th degree where i is the position in the coefficient array.
-    /// </summary>
-    public class Polynomial
+
+    public static class FrExtensions
     {
-        //TODO:? arbitrarily large coefficients
-        public int[] Coefficients { get; }
+        public static BigInteger AsBigInt(this Fr value) => new(value.ToBytes());
+    }
 
-        public bool IsZero() => Coefficients.All(c => c == 0);
-
-        #region Factory
-
-        /// <summary>
-        /// Creates a "zero" polynomial of the degree'th degree
-        /// </summary>
-        public static Polynomial Zero(int degree)
+    public static class BigIntegerExtensions
+    {
+        private const int FrSize = 2 << 4;
+        public static Fr AsFr(this BigInteger value)
         {
-            var poly = new Polynomial(new int[degree]);
-            return poly;
+            var bytes = value.ToByteArray().Pad(FrSize).ToArray().AsSpan();
+
+            return Fr.FromBytes(bytes);
         }
 
-        private Polynomial(int[] coefficients)
+    }
+
+    public static class EnumerableExtensions
+    {
+        public static IEnumerable<T> Pad<T>(this IEnumerable<T> source, int size)
         {
-            Coefficients = coefficients;
+            return source.Concat(Enumerable.Repeat(default(T), size)).Take(size);
         }
-
-        #endregion
-    }
-
-
-    /// <summary>
-    /// from http://cacr.uwaterloo.ca/techreports/2010/cacr2010-10.pdf 3.1 Definition
-    /// </summary>
-    public interface ICommitmentScheme
-    {
-        KeyPair Setup(/*TODO? 1**k*/int degree);
-        Commitment Commit(PublicKey publicKey, Polynomial polynomial);
-        Polynomial Open(PublicKey publicKey, Polynomial polynomial, Decommitment decommitment);
-        bool VerifyPoly(PublicKey publicKey, Commitment commitment, Polynomial polynomial, Decommitment decommitment);
-        WitnessGroup CreateWitness(PublicKey publicKey, Polynomial polynomial, int index, Decommitment decommitment);
-        bool VerifyEval(PublicKey publicKey, Commitment commitment, int index, Polynomial polynomial, Witness witness);
-    }
-
-    public class WitnessGroup
-    {
-        public int Index { get; set; }
-        public Polynomial Polynomial { get; set; }
-        public Witness Witness { get; set; }
-    }
-
-    public class Witness
-    {
-
-    }
-
-    public class Decommitment
-    {
-
-    }
-
-    public class Commitment
-    {
-
-    }
-
-    public class KeyPair
-    {
-        public PublicKey PublicKey { get; set; }
-        public PrivateKey PrivateKey { get; set; }
-    }
-
-    public class PrivateKey
-    {
-
-    }
-
-    public class PublicKey
-    {
-
     }
 }
