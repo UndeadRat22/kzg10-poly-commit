@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -16,7 +16,8 @@ namespace Commitments
             var g1 = G1Builder.Build(poly.Size, Secret);
 
             var parts = poly.Frs
-                .Select(fr => MclBls12381.EvaluatePolynomial(g1, fr));
+                .Zip(g1)
+                .Select(pair => pair.Second * pair.First);
 
             var commitment = parts.Aggregate(G1.Zero, (acc, e) => acc + e);
         }
