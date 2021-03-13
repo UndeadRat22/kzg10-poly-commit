@@ -5,8 +5,8 @@ namespace Commitments.Types
 {
     public struct G1Point
     {
-        public const string G1GenX = "17F1D3A73197D7942695638C4FA9AC0FC3688C4F9774B905A14E3A3F171BAC586C55E83FF97A1AEFFB3AF00ADB22C6BB";
-        public const string G1GenY = "08B3F481E3AAA0F1A09E30ED741D8AE4FCF5E095D5D00AF600DB18CB2C04B3EDD03CC744A2888AE40CAA232946C5E7E1";
+        public const string G1GenX = "17f1d3a73197d7942695638c4fa9ac0fc3688c4f9774b905a14e3a3f171bac586c55e83ff97a1aeffb3af00adb22c6bb";
+        public const string G1GenY = "8b3f481e3aaa0f1a09e30ed741d8ae4fcf5e095d5d00af600db18cb2c04b3edd03cc744a2888ae40caa232946c5e7e10";
         public const string G1GenZ = "01";
 
         public const int ByteSize = Fp.ByteSize * 3;
@@ -19,9 +19,9 @@ namespace Commitments.Types
         public static G1Point Generator = GetNewGenerator();
         public static G1Point GetNewGenerator()
         {
-            var xBytes = StringConverter.StringToByteArray(G1GenX, 16);
-            var yBytes = StringConverter.StringToByteArray(G1GenY, 16);
-            var zBytes = StringConverter.StringToByteArray(G1GenZ, 16);
+            var xBytes = StringConverter.HexStringToByteArray(G1GenX);
+            var yBytes = StringConverter.HexStringToByteArray(G1GenY);
+            var zBytes = StringConverter.HexStringToByteArray(G1GenZ);
 
             return new G1Point
             {

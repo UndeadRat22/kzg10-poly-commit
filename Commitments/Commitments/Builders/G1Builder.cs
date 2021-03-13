@@ -1,15 +1,9 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Numerics;
-using System.Runtime.Serialization.Formatters.Binary;
-using Commitments.Builders;
-using Commitments.Conversion.Converters;
+﻿using System.Text;
 using Commitments.Conversion.Extensions;
 using Commitments.Types;
 using MCL.BLS12_381.Net;
 
-namespace Commitments
+namespace Commitments.Builders
 {
     public static class G1Builder
     {
@@ -26,6 +20,22 @@ namespace Commitments
             }
 
             return result;
+        }
+
+
+        public static G1 CustomFromBytes(byte[] bytes)
+        {
+            var setStrFunction = MclFunctionProvider.Provide<mclBnG1_deserialize>("MclBnG1Deserialize");
+
+            var g1 = new G1();
+            unsafe
+            {
+                fixed (byte* bytePtr = bytes)
+                {
+                    var result = setStrFunction.Invoke(&g1, bytePtr, (ulong)bytes.Length);
+                }
+            }
+            return g1;
         }
     }
 }

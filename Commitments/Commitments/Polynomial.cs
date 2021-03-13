@@ -12,9 +12,9 @@ namespace Commitments
         public Polynomial(IEnumerable<BigInteger> coefficients)
         {
             Coefficients = coefficients.ToImmutableList();
-            Frs = Coefficients
-                .Select(coefficient => coefficient.AsFr())
-                .ToArray();
+            //Frs = Coefficients
+            //    //.Select(coefficient => coefficient.AsFr())
+            //    .ToArray();
         }
 
         public Fr[] Frs { get; }

@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Commitments", "Commitments\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{61A3819C-84F3-42BF-93D7-C0D2CA72AFFE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commitments.Tests", "Tests\Commitments.Tests\Commitments.Tests.csproj", "{3768B68A-9AA9-41EC-BC5A-A714200B3F18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Commitments.Tests", "Tests\Commitments.Tests\Commitments.Tests.csproj", "{3768B68A-9AA9-41EC-BC5A-A714200B3F18}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

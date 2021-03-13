@@ -7,30 +7,20 @@ namespace Commitments.Builders
 {
     public static class FrBuilder
     {
-        public static Fr BuildFromString(string value, int fromBase)
+        public static Fr FromString(string value, int fromBase)
         {
-            var importsField = typeof(MclBls12381)
-                .GetFields(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public)
-                .First(prop => prop.Name == "Imports");
+            var setStrFunction = MclFunctionProvider.Provide<mclBnFr_setStr>("MclBnFrSetStr");
 
-            var importsValue = importsField.GetValue(null);
-
-            var mclBnFrSetStrField = importsValue.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
-                .First(prop => prop.Name == "MclBnFrSetStr");
-
-            dynamic mclBnFrSetStr = mclBnFrSetStrField.GetValue(importsValue);
-
+            var bytes = Encoding.ASCII.GetBytes(value);
+            var fr = new Fr();
             unsafe
             {
-                var bytes = Encoding.ASCII.GetBytes(value);
-                var method = mclBnFrSetStr.Value as mclBnFr_setStr;
-                var fr = new Fr();
                 fixed (byte* bytePtr = bytes)
                 {
-                    var result = method.Invoke(&fr, bytePtr, (ulong)bytes.Length, fromBase);
+                    var result = setStrFunction.Invoke(&fr, bytePtr, (ulong)bytes.Length, fromBase);
                 }
-                return fr;
             }
+            return fr;
         }
     }
 }
