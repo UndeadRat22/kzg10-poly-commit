@@ -16,3 +16,6 @@ Field elements should be represented by some structure like:
     Value: 5 -- [0 .. 16]
 }
 ```
+
+        //https://github.com/protolambda/go-kzg/blob/7b02600fc0c856bd8e30a9d72ce3a3e9a03f38db/setup.go
+        //čia x, (x^n) reiktų turėt ant G1 ir čia bus žinomas taškas

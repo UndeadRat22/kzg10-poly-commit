@@ -23,5 +23,17 @@ namespace Commitments
         public BigInteger this[in int index] => Coefficients[index];
 
         public int Size => Coefficients.Count;
+
+        public G1 Commit(G1[] g1)
+        {
+            var parts = g1
+                .Zip(Frs)
+                // g1[i] * fr[i]
+                .Select(pair => pair.First * pair.Second);
+
+            var commitment = parts.Aggregate(G1.Zero, (acc, e) => acc + e);
+
+            return commitment;
+        }
     }
 }

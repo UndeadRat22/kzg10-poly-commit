@@ -1,22 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
+﻿using System.Linq;
 using System.Reflection;
 using System.Text;
-using Commitments.Conversion.Converters;
-using Commitments.Conversion.Extensions;
-using Commitments.Types;
 using MCL.BLS12_381.Net;
 
-namespace Commitments
+namespace Commitments.Builders
 {
-    public class Program
+    public static class FrBuilder
     {
-        public static void Main(string[] args)
+        public static Fr BuildFromString(string value, int fromBase)
         {
-            //internal readonly Lazy<mclBnFr_setStr> MclBnFrSetStr;
-
             var importsField = typeof(MclBls12381)
                 .GetFields(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public)
                 .First(prop => prop.Name == "Imports");
@@ -30,28 +22,14 @@ namespace Commitments
 
             unsafe
             {
-                var value = "1927409816240961209460912649124";
                 var bytes = Encoding.ASCII.GetBytes(value);
                 var method = mclBnFrSetStr.Value as mclBnFr_setStr;
                 var fr = new Fr();
                 fixed (byte* bytePtr = bytes)
                 {
-                    var result = method.Invoke(&fr, bytePtr, (ulong) bytes.Length, 10);
+                    var result = method.Invoke(&fr, bytePtr, (ulong)bytes.Length, fromBase);
                 }
-            }
-
-
-            unsafe
-            {
-                Console.WriteLine(sizeof(Fp));
-
-
-                var generator = G1Point.GetNewGenerator();
-
-
-                //lib
-                Console.WriteLine(sizeof(G1));
-                Console.WriteLine(sizeof(Fr));
+                return fr;
             }
         }
     }

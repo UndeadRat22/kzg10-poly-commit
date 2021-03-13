@@ -1,27 +1,31 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.Serialization.Formatters.Binary;
+using Commitments.Builders;
+using Commitments.Conversion.Converters;
+using Commitments.Conversion.Extensions;
+using Commitments.Types;
 using MCL.BLS12_381.Net;
 
 namespace Commitments
 {
     public static class G1Builder
     {
-        public static G1[] Build(int depth, BigInteger secret) 
-            => GetParts(depth, secret).ToArray();
-        
-        private static IEnumerable<G1> GetParts(int depth, BigInteger secret)
+        public static G1Point[] Build(int depth, Fr secret)
         {
-            yield return G1.Generator;
-            
-            var currentSecret = secret.AsFr();
+            var sPow = Fr.One;
+
+            var result = new G1Point[depth];
             for (var i = 0; i < depth; i++)
             {
-                var next = G1.Generator * currentSecret;
-                currentSecret *= secret.AsFr();
-
-                yield return next;
+                result[i] = (G1Point.Generator.AsG1() * sPow).AsG1Point();
+                var sPowCopy = Fr.FromBytes(sPow.ToBytes());
+                sPow = sPowCopy * secret;
             }
+
+            return result;
         }
     }
 }
