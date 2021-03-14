@@ -3,7 +3,6 @@ using Commitments.Builders;
 using Commitments.Tests.Fixtures;
 using mcl;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Commitments.Tests
 {

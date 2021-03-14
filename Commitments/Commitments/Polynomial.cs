@@ -45,5 +45,29 @@ namespace Commitments
             }
             return commitment;
         }
+
+        public MCL.G1 GenerateProof(MCL.Fr position)
+        {
+            var divisor = new MCL.Fr[2];
+
+            divisor[0].Neg(position); // -x;
+            divisor[1].SetInt(1); // 1
+
+            // quotientPolynomial := polyLongDiv(poly, divisor[:])
+            var quotientPolynomial = LongDivision(divisor);
+
+
+            //TODO:
+            // evaluate quotient poly at shared secret, in G1
+            //    return bls.LinCombG1(ks.SecretG1[:len(quotientPolynomial)], quotientPolynomial)
+
+            return new MCL.G1();
+        }
+
+        //TODO:
+        public Polynomial LongDivision(MCL.Fr[] divisor)
+        {
+            return null;
+        }
     }
 }
