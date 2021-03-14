@@ -1,20 +1,20 @@
 ﻿using System.Linq;
 using Commitments.Builders;
+using Commitments.Tests.Fixtures;
 using mcl;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Commitments.Tests
 {
-    public class G1BuilderTests
+    [Collection("Sequential")]
+    public class G1BuilderTests : IClassFixture<CommitmentTestFixture>
     {
 
         [Fact]
         public void G1BuilderShouldHaveExactValueGivenSpecificParameters()
         {
             // Arrange
-            MCL.Init(mcl.MCL.BLS12_381);
-            MCL.ETHmode();
             var secret = new MCL.Fr();
             secret.SetStr("1927409816240961209460912649124", 10);
 
@@ -52,9 +52,6 @@ namespace Commitments.Tests
         public void G1BuilderGeneratorShouldNotBeZero()
         {
             // Arrange
-            MCL.Init(MCL.BLS12_381);
-            MCL.ETHmode();
-
             var builder = new G1Builder();
 
             // Act
@@ -68,9 +65,6 @@ namespace Commitments.Tests
         public void G1BuilderGeneratorShouldBeValid()
         {
             // Arrange
-            MCL.Init(mcl.MCL.BLS12_381);
-            MCL.ETHmode();
-
             var builder = new G1Builder();
 
             // Act

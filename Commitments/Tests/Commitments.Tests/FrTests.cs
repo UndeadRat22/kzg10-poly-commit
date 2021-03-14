@@ -1,17 +1,17 @@
 ﻿using System.Linq;
+using Commitments.Tests.Fixtures;
 using mcl;
 using Xunit;
 
 namespace Commitments.Tests
 {
-    public class FrTests
+    [Collection("Sequential")]
+    public class FrTests : IClassFixture<CommitmentTestFixture>
     {
         [Fact]
         public void FrBuilderFromStringSetsExactBytes()
         {
             // arrange
-            MCL.Init(MCL.BLS12_381);
-            MCL.ETHmode();
             var expectedBytes = new byte[] {164, 115, 49, 149, 40, 200, 182, 234, 77, 8, 204, 83, 24};
 
             // act

@@ -1,17 +1,17 @@
 ﻿using Commitments.Builders;
+using Commitments.Tests.Fixtures;
 using mcl;
 using Xunit;
 
 namespace Commitments.Tests
 {
-    public class PolynomialTests
+    [Collection("Sequential")]
+    public class PolynomialTests : IClassFixture<CommitmentTestFixture>
     {
         [Fact]
-        public void Foo()
+        public void CommitShouldHaveASpecificValueGivenExactInputs()
         {
             // Arrange
-            MCL.Init(MCL.BLS12_381);
-            MCL.ETHmode();
             var polynomial = new Polynomial(new[] {1, 2, 3, 4, 7, 7, 7, 7, 13, 13, 13, 13, 13, 13, 13, 13});
             
             var secret = new MCL.Fr();
