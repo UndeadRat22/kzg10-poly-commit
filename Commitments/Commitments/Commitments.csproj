@@ -14,10 +14,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MCL.BLS12_381.Net" Version="0.0.3" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="mcl">
       <HintPath>..\Libs\mcl.dll</HintPath>
     </Reference>
@@ -27,6 +23,10 @@
     <None Update="mclbn384_256.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Conversion\Extensions\" />
   </ItemGroup>
 
 </Project>

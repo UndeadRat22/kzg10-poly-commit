@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Reflection;
-using System.Text;
-using Commitments.Conversion.Converters;
-using Commitments.Conversion.Extensions;
-using Commitments.Types;
-
-namespace Commitments
+﻿namespace Commitments
 {
     public class Program
     {

@@ -15,7 +15,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MCL.BLS12_381.Net" Version="0.0.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.1" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
@@ -30,6 +29,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Commitments\Commitments.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="mcl">
+      <HintPath>..\..\Libs\mcl.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

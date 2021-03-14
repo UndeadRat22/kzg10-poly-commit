@@ -1,38 +1,48 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
-using MCL.BLS12_381.Net;
+using mcl;
 
 namespace Commitments
 {
     public class Polynomial
     {
-        public Polynomial(IEnumerable<BigInteger> coefficients)
+        public Polynomial(IEnumerable<int> coefficients)
         {
-            Coefficients = coefficients.ToImmutableList();
-            //Frs = Coefficients
-            //    //.Select(coefficient => coefficient.AsFr())
-            //    .ToArray();
+            Coefficients = coefficients
+                .Select(coefficient =>
+                {
+                    var fr = new MCL.Fr();
+                    fr.SetInt(coefficient);
+                    return fr;
+                }).ToArray();
         }
 
-        public Fr[] Frs { get; }
-        public IReadOnlyList<BigInteger> Coefficients { get; }
-
-        public BigInteger this[in int index] => Coefficients[index];
-
-        public int Size => Coefficients.Count;
-
-        public G1 Commit(G1[] g1)
+        public Polynomial(MCL.Fr[] coefficients)
         {
-            var parts = g1
-                .Zip(Frs)
-                // g1[i] * fr[i]
-                .Select(pair => pair.First * pair.Second);
+            Coefficients = coefficients;
+        }
 
-            var commitment = parts.Aggregate(G1.Zero, (acc, e) => acc + e);
+        public MCL.Fr[] Coefficients { get; }
+        public int Size => Coefficients.Length;
 
+        public MCL.G1 Commit(MCL.G1[] g1Points)
+        {
+            if (Coefficients.Length != g1Points.Length)
+            {
+                throw new ArgumentException($"Cannot commit a polynomial of length {Size} to curve points of length {g1Points.Length}");
+            }
+
+
+            var commitment = new MCL.G1();
+            foreach (var (coefficient, point) in Coefficients.Zip(g1Points))
+            {
+                var coefficientOnPoint = new MCL.G1();
+                MCL.mclBnG1_mul(ref coefficientOnPoint, point, coefficient);
+                
+                MCL.mclBnG1_add(ref commitment, commitment, coefficientOnPoint);
+            }
             return commitment;
         }
     }
