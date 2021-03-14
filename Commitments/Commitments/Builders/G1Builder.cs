@@ -44,19 +44,5 @@ namespace Commitments.Builders
 
             return result;
         }
-        //public static G1Point[] Build(int depth, Fr secret)
-        //{
-        //    var sPow = Fr.One;
-
-        //    var result = new G1Point[depth];
-        //    for (var i = 0; i < depth; i++)
-        //    {
-        //        result[i] = (G1Point.Generator.AsG1() * sPow).AsG1Point();
-        //        var sPowCopy = Fr.FromBytes(sPow.ToBytes());
-        //        sPow = sPowCopy * secret;
-        //    }
-
-        //    return result;
-        //}
     }
 }
