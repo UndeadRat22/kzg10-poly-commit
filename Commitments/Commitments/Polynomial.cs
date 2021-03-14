@@ -34,35 +34,39 @@ namespace Commitments
                 throw new ArgumentException($"Cannot commit a polynomial of length {Size} to curve points of length {g1Points.Length}");
             }
 
-
-            var commitment = new MCL.G1();
-            foreach (var (coefficient, point) in Coefficients.Zip(g1Points))
-            {
-                var coefficientOnPoint = new MCL.G1();
-                coefficientOnPoint.Mul(point, coefficient);
-                
-                commitment.Add(commitment, coefficientOnPoint);
-            }
-            return commitment;
+            return Coefficients.Zip(g1Points)
+                .Aggregate(new MCL.G1(), (acc, val) => acc + val.Second * val.First);
         }
 
-        public MCL.G1 GenerateProofAt(MCL.G1[] secretG1, MCL.Fr position)
+        public MCL.Fr EvaluateAt(MCL.Fr point)
+        {
+            var result = new MCL.Fr();
+            MCL.mclBn_FrEvaluatePolynomial(ref result, Coefficients, Coefficients.Length, point);
+
+            return result;
+        }
+
+        public MCL.G1 GenerateProofAt(MCL.G1[] secretG1, MCL.Fr point)
         {
             var divisor = new MCL.Fr[2];
 
             // { -x, 1 }
-            divisor[0].Neg(position);
+            divisor[0].Neg(point);
             divisor[1].SetInt(1);
 
             var quotientPolynomial = LongDivision(divisor);
 
-            // mclBnG1_mulVec does should do exactly the same thing, doesn't exist
-            // basically a linear combination: sum(g1[i] * fr[i])
-            var values = secretG1.Zip(quotientPolynomial.Coefficients)
-                .Select(pair => pair.First.MultiplyBy(pair.Second))
-                .ToArray();
+            //// mclBnG1_mulVec does should do exactly the same thing, doesn't exist
+            //// basically a linear combination: sum(g1[i] * fr[i])
+            //var values = secretG1.Zip(quotientPolynomial.Coefficients)
+            //    .Select(pair => pair.First.MultiplyBy(pair.Second))
+            //    .ToArray();
 
-            return values.Aggregate(new MCL.G1()/*"0"*/, (acc, val) => acc.AddWith(val));
+            //return values.Aggregate(new MCL.G1()/*"0"*/, (acc, val) => acc.AddWith(val));
+            var g1 = new MCL.G1();
+            MCL.mclBnG1_mulVec(ref g1, secretG1, quotientPolynomial.Coefficients, Math.Min(secretG1.Length, quotientPolynomial.Size));
+
+            return g1;
         }
 
         public Polynomial LongDivision(MCL.Fr[] divisor)
@@ -77,12 +81,10 @@ namespace Commitments
 
             while (diff >= 0)
             {
-                result[diff] = polyCopy[aPos].DivideBy(divisor[bPos]);
+                result[diff] = polyCopy[aPos] / divisor[bPos];
                 for (var i = bPos; i>= 0; i--)
                 {
-                    // a[d+i] -= result[d] * divisor[i];
-                    polyCopy[diff + i] = polyCopy[diff + i]
-                        .Subtract(result[diff].MultiplyBy(divisor[i]));
+                    polyCopy[diff + i] = polyCopy[diff + i] - result[diff] * divisor[i];
                 }
                 aPos--;
                 diff--;

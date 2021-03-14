@@ -28,14 +28,12 @@ namespace Commitments.Builders
 
         public MCL.G1[] Build(int depth, MCL.Fr secret)
         {
-            var secretToPower = new MCL.Fr();
-            secretToPower.SetInt(1);
+            var secretToPower = MCL.Fr.One();
 
             var result = new MCL.G1[depth];
             for (var i = 0; i < depth; i++)
             {
-                result[i].Mul(Generator, secretToPower);
-
+                result[i] = Generator * secretToPower;
                 secretToPower *= secret;
             }
 
