@@ -34,12 +34,9 @@ namespace Commitments.Builders
             var result = new MCL.G1[depth];
             for (var i = 0; i < depth; i++)
             {
-                MCL.mclBnG1_mul(ref result[i], Generator, secretToPower);
+                result[i].Mul(Generator, secretToPower);
 
-                var nextPower = new MCL.Fr();
-                MCL.mclBnFr_mul(ref nextPower, secretToPower, secret);
-
-                secretToPower = nextPower;
+                secretToPower *= secret;
             }
 
             return result;

@@ -27,5 +27,27 @@ namespace Commitments.Tests
             
             Assert.Equal(expected, actual);
         }
+
+        [Fact]
+        public void Foo()
+        {
+            // Arrange
+            var polynomial = new Polynomial(new[] { 1, 2, 3, 4, 7, 7, 7, 7, 13, 13, 13, 13, 13, 13, 13, 13 });
+
+            var secret = new MCL.Fr();
+            secret.SetStr("1927409816240961209460912649124", 10);
+            var g1Points = new G1Builder().Build(polynomial.Size, secret);
+
+            // Act
+            var fr = new MCL.Fr();
+            fr.SetInt(17);
+
+            var proof = polynomial.GenerateProofAt(g1Points, fr);
+
+            // Assert
+            var expected = "1 867803339007397142967426903694725732786398875082812714585913536387867789215930966591756718433944432919654354450045 1056604647851765547809696011101405958529416282518275445556537937608095695960215709670255078026676619389223749112525";
+            var actual = proof.GetStr(10);
+            Assert.Equal(expected, actual);
+        }
     }
 }

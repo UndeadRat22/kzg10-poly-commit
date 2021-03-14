@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
+using Commitments.Extensions;
 using mcl;
 
 namespace Commitments
@@ -39,35 +39,65 @@ namespace Commitments
             foreach (var (coefficient, point) in Coefficients.Zip(g1Points))
             {
                 var coefficientOnPoint = new MCL.G1();
-                MCL.mclBnG1_mul(ref coefficientOnPoint, point, coefficient);
+                coefficientOnPoint.Mul(point, coefficient);
                 
-                MCL.mclBnG1_add(ref commitment, commitment, coefficientOnPoint);
+                commitment.Add(commitment, coefficientOnPoint);
             }
             return commitment;
         }
 
-        public MCL.G1 GenerateProof(MCL.Fr position)
+        public MCL.G1 GenerateProofAt(MCL.G1[] secretG1, MCL.Fr position)
         {
             var divisor = new MCL.Fr[2];
 
-            divisor[0].Neg(position); // -x;
-            divisor[1].SetInt(1); // 1
+            // { -x, 1 }
+            divisor[0].Neg(position);
+            divisor[1].SetInt(1);
 
-            // quotientPolynomial := polyLongDiv(poly, divisor[:])
             var quotientPolynomial = LongDivision(divisor);
 
+            // mclBnG1_mulVec does should do exactly the same thing, doesn't exist
+            // basically a linear combination: sum(g1[i] * fr[i])
+            var values = secretG1.Zip(quotientPolynomial.Coefficients)
+                .Select(pair => pair.First.MultiplyBy(pair.Second))
+                .ToArray();
 
-            //TODO:
-            // evaluate quotient poly at shared secret, in G1
-            //    return bls.LinCombG1(ks.SecretG1[:len(quotientPolynomial)], quotientPolynomial)
-
-            return new MCL.G1();
+            return values.Aggregate(new MCL.G1()/*"0"*/, (acc, val) => acc.AddWith(val));
         }
 
-        //TODO:
         public Polynomial LongDivision(MCL.Fr[] divisor)
         {
-            return null;
+            var polyCopy = Copy().Coefficients;
+
+            var aPos = polyCopy.Length - 1;
+            var bPos = divisor.Length - 1;
+            var diff = aPos - bPos;
+
+            var result = new MCL.Fr[diff + 1];
+
+            while (diff >= 0)
+            {
+                result[diff] = polyCopy[aPos].DivideBy(divisor[bPos]);
+                for (var i = bPos; i>= 0; i--)
+                {
+                    // a[d+i] -= result[d] * divisor[i];
+                    polyCopy[diff + i] = polyCopy[diff + i]
+                        .Subtract(result[diff].MultiplyBy(divisor[i]));
+                }
+                aPos--;
+                diff--;
+            }
+
+            return new Polynomial(result);
+        }
+
+        public Polynomial Copy()
+        {
+            var copiedCoefficients = Coefficients
+                .Select(c => c.Copy())
+                .ToArray();
+
+            return new Polynomial(copiedCoefficients);
         }
     }
 }
