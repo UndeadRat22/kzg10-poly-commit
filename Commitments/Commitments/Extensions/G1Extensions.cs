@@ -19,5 +19,13 @@ namespace Commitments.Extensions
 
             return result;
         }
+
+        public static MCL.GT PairWith(this MCL.G1 value, MCL.G2 with)
+        {
+            var gt = new MCL.GT();
+            gt.Pairing(value, with);
+
+            return gt;
+        }
     }
 }

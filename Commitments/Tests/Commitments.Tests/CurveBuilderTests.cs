@@ -7,7 +7,7 @@ using Xunit;
 namespace Commitments.Tests
 {
     [Collection("Sequential")]
-    public class G1BuilderTests : IClassFixture<CommitmentTestFixture>
+    public class CurveBuilderTests : IClassFixture<CommitmentTestFixture>
     {
 
         [Fact]
@@ -18,7 +18,7 @@ namespace Commitments.Tests
             secret.SetStr("1927409816240961209460912649124", 10);
 
             // Act
-            var g1 = new G1Builder().Build(17, secret);
+            var g1 = new CurveBuilder().Build(17, secret).G1Points;
 
             // Assert
             var values = g1.Select(point => point.GetStr(10)).ToList();
@@ -51,10 +51,10 @@ namespace Commitments.Tests
         public void G1BuilderGeneratorShouldNotBeZero()
         {
             // Arrange
-            var builder = new G1Builder();
+            var builder = new CurveBuilder();
 
             // Act
-            var isZero = builder.Generator.IsZero();
+            var isZero = builder.G1Gen.IsZero();
 
             // Assert
             Assert.False(isZero);
@@ -64,10 +64,10 @@ namespace Commitments.Tests
         public void G1BuilderGeneratorShouldBeValid()
         {
             // Arrange
-            var builder = new G1Builder();
+            var builder = new CurveBuilder();
 
             // Act
-            var isValid = builder.Generator.IsValid();
+            var isValid = builder.G1Gen.IsValid();
 
             // Assert
             Assert.True(isValid);

@@ -4,7 +4,7 @@ using System.Linq;
 using Commitments.Extensions;
 using mcl;
 
-namespace Commitments
+namespace Commitments.Types
 {
     public class Polynomial
     {
@@ -55,14 +55,8 @@ namespace Commitments
             divisor[1].SetInt(1);
 
             var quotientPolynomial = LongDivision(divisor);
-
-            //// mclBnG1_mulVec does should do exactly the same thing, doesn't exist
-            //// basically a linear combination: sum(g1[i] * fr[i])
-            //var values = secretG1.Zip(quotientPolynomial.Coefficients)
-            //    .Select(pair => pair.First.MultiplyBy(pair.Second))
-            //    .ToArray();
-
-            //return values.Aggregate(new MCL.G1()/*"0"*/, (acc, val) => acc.AddWith(val));
+            
+            // basically a linear combination: sum(g1[i] * fr[i])
             var g1 = new MCL.G1();
             MCL.mclBnG1_mulVec(ref g1, secretG1, quotientPolynomial.Coefficients, Math.Min(secretG1.Length, quotientPolynomial.Size));
 

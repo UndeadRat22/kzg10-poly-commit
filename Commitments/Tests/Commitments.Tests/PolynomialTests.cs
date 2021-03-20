@@ -1,5 +1,6 @@
 ﻿using Commitments.Builders;
 using Commitments.Tests.Fixtures;
+using Commitments.Types;
 using mcl;
 using Xunit;
 
@@ -16,7 +17,7 @@ namespace Commitments.Tests
 
             var secret = new MCL.Fr();
             secret.SetStr("1927409816240961209460912649124", 10);
-            var g1Points = new G1Builder().Build(polynomial.Size, secret);
+            var g1Points = new CurveBuilder().Build(polynomial.Size, secret).G1Points;
 
             // Act
             var commitment = polynomial.Commit(g1Points);
@@ -37,7 +38,7 @@ namespace Commitments.Tests
 
             var secret = new MCL.Fr();
             secret.SetStr("1927409816240961209460912649124", 10);
-            var g1Points = new G1Builder().Build(polynomial.Size, secret);
+            var g1Points = new CurveBuilder().Build(polynomial.Size, secret).G1Points;
 
             // Act
             var fr = new MCL.Fr();
