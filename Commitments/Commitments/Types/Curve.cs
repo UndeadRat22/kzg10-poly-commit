@@ -1,11 +1,10 @@
-﻿using System.Linq;
-using Commitments.Builders;
-using Commitments.Extensions;
+﻿using Commitments.Extensions;
+using Commitments.Types.Contract;
 using mcl;
 
 namespace Commitments.Types
 {
-    public class Curve
+    public class Curve : IProofValidator
     {
         public Curve(int order, MCL.G1[] g1Points, MCL.G2[] g2Points)
         {

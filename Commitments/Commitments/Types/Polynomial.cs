@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using Commitments.Extensions;
+using Commitments.Types.Contract;
 using mcl;
 
 namespace Commitments.Types
 {
-    public class Polynomial
+    public class Polynomial 
+        : IPolynomialCommitmentGenerator, 
+          IPolynomialEvaluator, 
+          IPolynomialProofGenerator
     {
         public Polynomial(IEnumerable<int> coefficients)
         {
