@@ -41,6 +41,8 @@ namespace Commitments.Types
             var result = new MCL.G1();
 
             MCL.mclBnG1_mulVec(ref result, g1Points, Coefficients, Math.Min(g1Points.Length, Coefficients.Length));
+
+            return result;
         }
 
         public MCL.Fr EvaluateAt(MCL.Fr point)
