@@ -38,8 +38,9 @@ namespace Commitments.Types
                 throw new ArgumentException($"Cannot commit a polynomial of length {Size} to curve points of length {g1Points.Length}");
             }
 
-            return Coefficients.Zip(g1Points)
-                .Aggregate(new MCL.G1(), (acc, val) => acc + val.Second * val.First);
+            var result = new MCL.G1();
+
+            MCL.mclBnG1_mulVec(ref result, g1Points, Coefficients, Math.Min(g1Points.Length, Coefficients.Length));
         }
 
         public MCL.Fr EvaluateAt(MCL.Fr point)
@@ -82,11 +83,13 @@ namespace Commitments.Types
                 result[diff] = polyCopy[aPos] / divisor[bPos];
                 for (var i = bPos; i>= 0; i--)
                 {
-                    polyCopy[diff + i] = polyCopy[diff + i] - result[diff] * divisor[i];
+                    polyCopy[diff + i] -= result[diff] * divisor[i];
                 }
                 aPos--;
                 diff--;
             }
+
+            var xs = result.Select(r => r.GetStr(10)).ToList();
 
             return new Polynomial(result);
         }
